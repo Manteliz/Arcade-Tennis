@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<canvas id="gameCanvas" width="800" height="600" style="border-radius: 30px;"></canvas>
+
+<script>
+
+    var canvas;
+    var canvasContext;
+    var ballX = 0;
+
+    window.onload = function(){
+             
+        canvas = document.getElementById("gameCanvas");
+        canvasContext = canvas.getContext('2d');
+        var framesPerSecond = 60;
+        setInterval(drawEverything, 1000/framesPerSecond);
+
+    }
+
+    function drawEverything(){
+        canvasContext.fillStyle = 'black';
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        canvasContext.fillStyle = 'white';
+        canvasContext.fillRect(10, 250, 10, 100);
+        canvasContext.fillStyle = 'white';
+        canvasContext.fillRect(780, 250, 10, 100);
+        canvasContext.fillRect(ballX, ballX, 10, 10);
+        ballX++;
+    }
+
+</script>
+
+</html>
