@@ -5,7 +5,9 @@ var canvas = document.getElementById("gameCanvas");
     var ballY = 300;
     var ballSpeedX = 5;
     var ballSpeedY = 5;
+    var rightPaddleSpeed = 3;
     const PADDLE_HEIGHT = canvas.height/6;
+    const PADDLE_THICKNESS = 10;
     var paddle1Y = (canvas.height-PADDLE_HEIGHT)/2;
     var paddle2Y = (canvas.height-PADDLE_HEIGHT)/2;
 
@@ -21,9 +23,10 @@ var canvas = document.getElementById("gameCanvas");
 
         canvas.addEventListener('mousemove', function(evt){
             var mousePos = calculateMousePos(evt);
-            paddle1Y = mousePos.y;
-
+            paddle1Y = mousePos.y-PADDLE_HEIGHT/2;//top of the left paddle
         });
+
+
 
     }
 
@@ -44,9 +47,9 @@ var canvas = document.getElementById("gameCanvas");
         //next line makes the black canvas
         colorRect('black', 0, 0, canvas.width, canvas.height );
         //next line draws the left paddle
-        colorRect('white', 10, paddle1Y-PADDLE_HEIGHT/2, 10, PADDLE_HEIGHT );
+        colorRect('white', 10, paddle1Y , PADDLE_THICKNESS, PADDLE_HEIGHT );
         //next line draws the right paddle
-        colorRect('white', 780, paddle2Y, 10, PADDLE_HEIGHT );
+        colorRect('white', canvas.width-10-PADDLE_THICKNESS, paddle2Y, PADDLE_THICKNESS, PADDLE_HEIGHT );
         //next line draws a ball
         colorCircle(ballX, ballY, ballSize, 'white');
         //next line draws initials
@@ -57,13 +60,28 @@ var canvas = document.getElementById("gameCanvas");
 
     function moveEverything(){
         //handling the bounce from the left and right
+        //next handles the right side
+        computerMovement();
         if((ballX+ballSize) >= canvas.width-20){
-            ballSpeedX = - ballSpeedX;
+            if(ballY >= paddle2Y && ballY <= (paddle2Y+PADDLE_HEIGHT)){
+                //ball hits the paddle
+                ballSpeedX = - ballSpeedX;
+            }else{
+                //ball misses the paddle
+                resetBall();
+            }
         }
+        //next handles the left side
         if((ballX-ballSize) <= 20){
-            ballSpeedX = - ballSpeedX;
+            if(ballY >= paddle1Y && ballY <= (paddle1Y+PADDLE_HEIGHT)){
+                //ball hits the paddle
+                ballSpeedX = - ballSpeedX;
+            }else{
+                //ball misses the paddle
+                resetBall();
+            }
         }
-        ballX = ballX + ballSpeedX;
+        ballX += ballSpeedX;
         //handling the bounces from the top and bottom
         if((ballY+ballSize) >= canvas.height){
             ballSpeedY = - ballSpeedY;
@@ -71,7 +89,25 @@ var canvas = document.getElementById("gameCanvas");
         if((ballY-ballSize) <= 0){
             ballSpeedY = - ballSpeedY;
         }
-        ballY = ballY + ballSpeedY;
+        ballY += ballSpeedY;
+    }
+
+    function computerMovement(){
+        //makes the paddle chase the ball
+        var middleOfThePaddle = paddle2Y+PADDLE_HEIGHT/2;
+        if(middleOfThePaddle < ballY){
+            //middle of the paddle is above the ball
+            paddle2Y += rightPaddleSpeed;
+        }else {
+            //middle of the paddle is equal or below the ball
+            paddle2Y -= rightPaddleSpeed;
+        }
+
+    }
+
+    function resetBall(){
+        ballX = canvas.width/2;
+        ballY = canvas.height/2;
     }
 
     function drawNet(color){
