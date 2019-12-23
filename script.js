@@ -5,11 +5,15 @@ var canvas = document.getElementById("gameCanvas");
     var ballY = 300;
     var ballSpeedX = 5;
     var ballSpeedY = 5;
-    var rightPaddleSpeed = 3;
+    var rightPaddleSpeed = 5;
     const PADDLE_HEIGHT = canvas.height/6;
     const PADDLE_THICKNESS = 10;
     var paddle1Y = (canvas.height-PADDLE_HEIGHT)/2;
     var paddle2Y = (canvas.height-PADDLE_HEIGHT)/2;
+    var player1Score = 0;
+    var player2Score = 0;
+    const WINNING_SCORE = 3;
+    var showWinningScreen = false;
 
 
     window.onload = function(){
@@ -46,6 +50,18 @@ var canvas = document.getElementById("gameCanvas");
     function drawEverything(){
         //next line makes the black canvas
         colorRect('black', 0, 0, canvas.width, canvas.height );
+        if(showWinningScreen){
+            var winner;
+            if(player1Score == WINNING_SCORE){
+                winner = "Player 1 ";
+            }else if(player2Score == WINNING_SCORE){
+                winner = "Player 2 ";
+            }
+            canvasContext.font = '20px serif';
+            canvasContext.fillStyle = "green";
+            canvasContext.fillText(winner + "won! Click to continue.", 200, canvas.height/2);
+            return;
+        }
         //next line draws the left paddle
         colorRect('white', 10, paddle1Y , PADDLE_THICKNESS, PADDLE_HEIGHT );
         //next line draws the right paddle
@@ -56,9 +72,15 @@ var canvas = document.getElementById("gameCanvas");
         drawInitials();
         //next line draws the net
         drawNet('white');
+
+        canvasContext.fillText(player1Score, 100, canvas.height - 100);
+        canvasContext.fillText(player2Score, canvas.width - 100, canvas.height - 100);
     }
 
     function moveEverything(){
+        if(showWinningScreen){
+            return;
+        }
         //handling the bounce from the left and right
         //next handles the right side
         computerMovement();
@@ -66,8 +88,14 @@ var canvas = document.getElementById("gameCanvas");
             if(ballY >= paddle2Y && ballY <= (paddle2Y+PADDLE_HEIGHT)){
                 //ball hits the paddle
                 ballSpeedX = - ballSpeedX;
+                //change the vertical ball movement based on where the ball hits the paddle. 
+                var middleOfThePaddle = paddle2Y + PADDLE_HEIGHT/2;
+                var deltaY = ballY - middleOfThePaddle;
+                ballSpeedY = deltaY*0.15;
+
             }else{
                 //ball misses the paddle
+                player1Score++; //must be BEFORE the resetBall()
                 resetBall();
             }
         }
@@ -76,8 +104,13 @@ var canvas = document.getElementById("gameCanvas");
             if(ballY >= paddle1Y && ballY <= (paddle1Y+PADDLE_HEIGHT)){
                 //ball hits the paddle
                 ballSpeedX = - ballSpeedX;
+                //change the vertical ball movement based on where the ball hits the paddle. 
+                var middleOfThePaddle = paddle1Y + PADDLE_HEIGHT/2;
+                var deltaY = ballY - middleOfThePaddle;
+                ballSpeedY = deltaY*0.15;
             }else{
                 //ball misses the paddle
+                player2Score++; //must be BEFORE the resetBall()
                 resetBall();
             }
         }
@@ -95,12 +128,12 @@ var canvas = document.getElementById("gameCanvas");
     function computerMovement(){
         //makes the paddle chase the ball
         var middleOfThePaddle = paddle2Y+PADDLE_HEIGHT/2;
-        if(middleOfThePaddle < ballY){
-            //middle of the paddle is above the ball
-            paddle2Y += rightPaddleSpeed;
-        }else {
-            //middle of the paddle is equal or below the ball
+        if(ballY < middleOfThePaddle-35){
+            //ball is above the middle of the paddle - 35
             paddle2Y -= rightPaddleSpeed;
+        }else if(ballY > middleOfThePaddle+35){
+            //ball is below the middle of the paddle+35
+            paddle2Y += rightPaddleSpeed;
         }
 
     }
@@ -108,6 +141,13 @@ var canvas = document.getElementById("gameCanvas");
     function resetBall(){
         ballX = canvas.width/2;
         ballY = canvas.height/2;
+        if(player1Score == WINNING_SCORE){
+            //player 1 won
+            showWinningScreen = true;  
+        }else if(player2Score == WINNING_SCORE){
+            //plater 2 won
+            showWinningScreen = true;
+        }
     }
 
     function drawNet(color){
