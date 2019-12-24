@@ -30,8 +30,16 @@ var canvas = document.getElementById("gameCanvas");
             paddle1Y = mousePos.y-PADDLE_HEIGHT/2;//top of the left paddle
         });
 
+        this.canvas.addEventListener('mousedown', handleMouseClick);
 
+    }
 
+    function handleMouseClick(evt){
+        if(showWinningScreen){
+            showWinningScreen = false;
+            player1Score = 0;
+            player2Score = 0;
+        }
     }
 
     function calculateMousePos(evt){
@@ -154,51 +162,11 @@ var canvas = document.getElementById("gameCanvas");
         canvasContext.beginPath();
         canvasContext.strokeStyle = color;
         canvasContext.lineWidth = 2;
-        canvasContext.moveTo(400, 20);
-        canvasContext.lineTo(400, 40);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 60);
-        canvasContext.lineTo(400, 80);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 100);
-        canvasContext.lineTo(400, 120);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 140);
-        canvasContext.lineTo(400, 160);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 180);
-        canvasContext.lineTo(400, 200);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 220);
-        canvasContext.lineTo(400, 240);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 260);
-        canvasContext.lineTo(400, 280);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 300);
-        canvasContext.lineTo(400, 320);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 340);
-        canvasContext.lineTo(400, 360);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 380);
-        canvasContext.lineTo(400, 400);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 420);
-        canvasContext.lineTo(400, 440);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 460);
-        canvasContext.lineTo(400, 480);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 500);
-        canvasContext.lineTo(400, 520);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 540);
-        canvasContext.lineTo(400, 560);
-        canvasContext.stroke();
-        canvasContext.moveTo(400, 580);
-        canvasContext.lineTo(400, 600);
-        canvasContext.stroke();
+        for(var i = 0; i <= canvas.height; i+=40){
+            canvasContext.moveTo(400, i);
+            canvasContext.lineTo(400, i+20);
+            canvasContext.stroke();
+        }
     }
 
     function colorCircle(centerX, centerY, radius, drawColor) {
